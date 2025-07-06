@@ -53,8 +53,8 @@ A backend RESTful API built with Express.js, TypeScript, and MongoDB, allowing u
 
 📁 Clone the Project
 
-=> git clone https://github.com/
-=> cd
+=> git clone https://github.com/NurUddin111/library-management-api.git
+=> cd library-management-api
 
 📦 Install Dependencies
 
@@ -124,6 +124,6 @@ A backend RESTful API built with Express.js, TypeScript, and MongoDB, allowing u
     ┣ 📜server.ts
     📁 .env
 
-👨‍🔧 Author
+👨‍🔧 Author::
 Muhammad Nur Uddin
-Full-stack Developer in the making 🚀
+🧑‍💻Full-stack Developer in the making 🚀
