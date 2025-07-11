@@ -17,7 +17,6 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
       const validBooksBody =
         await createSingleOrMultipleBookZodSchema.parseAsync(bookDetails);
       const newBooks = await Book.insertMany(validBooksBody);
-      // console.log("Zod Body:", validBooksBody);
       res.status(201).json({
         success: true,
         message: "Books Created Successfully",
