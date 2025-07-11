@@ -41,7 +41,6 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
       success: false,
       error: error,
     });
-    console.log(error);
   }
 });
 
@@ -65,18 +64,17 @@ bookRoutes.get("/", async (req: Request, res: Response) => {
       .sort(sortingOptions)
       .limit(resultLimit);
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Books retrieved successfully",
       data: allBooks,
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(404).json({
       success: false,
       message: "Failed to retrieve books!",
       error: error,
     });
-    console.log(error);
   }
 });
 
@@ -87,18 +85,17 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response) => {
     const bookID = req.params.bookId;
     const myBook = await Book.findById(bookID);
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Book retrieved successfully",
       data: myBook,
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(404).json({
       success: false,
       message: "Failed to retrieve book!Please enter a valid book id.",
       error: error,
     });
-    console.log(error);
   }
 });
 
@@ -111,7 +108,7 @@ bookRoutes.patch("/:bookId", async (req: Request, res: Response) => {
     const updatedBook = await Book.findByIdAndUpdate(bookID, newBookDetails, {
       new: true,
     });
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Book details updated successfully",
       data: updatedBook,
@@ -123,7 +120,6 @@ bookRoutes.patch("/:bookId", async (req: Request, res: Response) => {
         "Failed to update book details!Please enter a valid book id or book information.",
       error: error,
     });
-    console.log(error);
   }
 });
 
@@ -133,7 +129,7 @@ bookRoutes.delete("/:bookId", async (req: Request, res: Response) => {
   try {
     const bookID = req.params.bookId;
     await Book.findByIdAndDelete(bookID);
-    res.status(201).json({
+    res.status(204).json({
       success: true,
       message: "Book details deleted successfully",
     });
@@ -143,6 +139,5 @@ bookRoutes.delete("/:bookId", async (req: Request, res: Response) => {
       message: "Failed to delete book details!Please enter a valid book id.",
       error: error,
     });
-    console.log(error);
   }
 });

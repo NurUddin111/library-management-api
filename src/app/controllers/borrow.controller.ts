@@ -19,13 +19,13 @@ borrowBookRoutes.post("/", async (req: Request, res: Response) => {
     if (bookDetails && copies >= quantity) {
       const newBorrowRecord = await Borrow.create(validBorrowRecord);
       await bookDetails.borrow(quantity);
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         message: "Book borrowed successfully",
         data: newBorrowRecord,
       });
     } else {
-      res.status(400).json({
+      res.status(404).json({
         success: false,
         message:
           "Failed to borrow book!!!Can't find book with this id or not enough copies available.Kindly check your book id or reduce your quantity.",
@@ -38,7 +38,6 @@ borrowBookRoutes.post("/", async (req: Request, res: Response) => {
       success: false,
       error: error,
     });
-    console.log(error);
   }
 });
 
@@ -76,7 +75,7 @@ borrowBookRoutes.get("/", async (req: Request, res: Response) => {
       },
     ]);
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Borrow Records retrieved successfully",
       data: allBorrowRecords,
@@ -87,6 +86,5 @@ borrowBookRoutes.get("/", async (req: Request, res: Response) => {
       message: "Failed to retrieve borrow records!",
       error: error,
     });
-    console.log(error);
   }
 });
