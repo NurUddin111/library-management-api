@@ -87,28 +87,22 @@ A backend RESTful API built with Express.js, TypeScript, and MongoDB, allowing u
     ---------------------------------------------------------
     | Method    |     Endpoint        |      Description    |
     ---------------------------------------------------------
-    | POST      | /api/books          |   Add a new book    |
+    | POST      | /create-book        |   Add a new book    |
     ---------------------------------------------------------
-    | GET       | /api/books          |   Get all books     |
+    | GET       | /books              |   Get all books     |
     ---------------------------------------------------------
-    | GET       | /api/books/:bookId  |   Get a single book |
+    | GET       | /books/:bookId      |   Get a single book |
     ---------------------------------------------------------
-    | PATCH     | /api/books/:bookId  |   Update book info  |
+    | PUT       | /edit-book/:bookId  |   Update book info  |
     ---------------------------------------------------------
-    | DELETE    | /api/books/:bookId  |   Delete a book     |
-    ---------------------------------------------------------
-
-    📏Supports filters like:
-
-    => /api/books?filter=FICTION&sortBy=createdAt&sort=desc&limit=5
 
     📦Borrow
     -------------------------------------------------------------
     | Method    |     Endpoint        |     Description         |
     -------------------------------------------------------------
-    | POST      | /api/borrow         |  Borrow a book          |
+    | POST      | /borrow/:bookId     |  Borrow a book          |
     -------------------------------------------------------------
-    | GET       | /api/borrow         |  View borrow summary    |
+    | GET       | /borrow-summary     |  View borrow summary    |
     -------------------------------------------------------------
 
 🪜 Folder Structure
