@@ -67,6 +67,7 @@ A backend RESTful API built with Express.js, TypeScript, and MongoDB, allowing u
     => ts-node-dev
     => dotenv
     => zod
+    => cors
 
 ⚙️ Setup Environment Variables
 
