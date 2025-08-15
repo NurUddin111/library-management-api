@@ -1,22 +1,24 @@
-import { createSingleOrMultipleBookZodSchema } from "./../validations/book.zod.validation";
+import {
+  createSingleOrMultipleBookZodSchema,
+  updateBookZodSchema,
+} from "./../validations/book.zod.validation";
 import express, { Request, Response } from "express";
 import { Book } from "../models/books.model";
 
 export const bookRoutes = express.Router();
 
-// Using "/api/books" route with "POST" method we can create single or multiple book at a time.
+// Using "/create-book" route with "POST" method we can create single or multiple book at a time.
 
-bookRoutes.post("/", async (req: Request, res: Response) => {
+bookRoutes.post("/create-book", async (req: Request, res: Response) => {
   try {
     const bookDetails = req.body;
-    console.log(bookDetails);
 
     // For creating multiple books.
 
     if (Array.isArray(bookDetails)) {
-      const validBooksBody =
+      const validBooksDetails =
         await createSingleOrMultipleBookZodSchema.parseAsync(bookDetails);
-      const newBooks = await Book.insertMany(validBooksBody);
+      const newBooks = await Book.insertMany(validBooksDetails);
       res.status(201).json({
         success: true,
         message: "Books Created Successfully",
@@ -28,7 +30,6 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
       const validBookDetails =
         await createSingleOrMultipleBookZodSchema.parseAsync(bookDetails);
       const newBook = await Book.create(validBookDetails);
-      console.log("Zod Body:", validBookDetails);
       res.status(201).json({
         success: true,
         message: "Book Created Successfully",
@@ -44,25 +45,11 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
   }
 });
 
-// Using "/api/books" route with "GET" method we can find all the books. We can also filter by genre and sort by any field in ascending or descending way.
+// Using "/books" route with "GET" method we can find all the books. We can also filter by genre and sort by any field in ascending or descending way.
 
-bookRoutes.get("/", async (req: Request, res: Response) => {
+bookRoutes.get("/books", async (req: Request, res: Response) => {
   try {
-    const { filter, sortBy = "createdAt", sort = "asc", limit } = req.query;
-    const filteringByGenre: any = {};
-    if (filter) {
-      filteringByGenre.genre = filter.toString().toUpperCase();
-    }
-
-    const sortingOptions: any = {};
-
-    sortingOptions[sortBy.toString()] = sort === "asc" ? 1 : -1;
-
-    const resultLimit = limit ? parseInt(limit.toString()) : 10;
-
-    const allBooks = await Book.find(filteringByGenre)
-      .sort(sortingOptions)
-      .limit(resultLimit);
+    const allBooks = await Book.find();
 
     res.status(200).json({
       success: true,
@@ -78,9 +65,9 @@ bookRoutes.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// Using "api/books/:bookId" route with "GET" method we can find the data of any particular book.
+// Using "/books/:bookId" route with "GET" method we can find the data of any particular book.
 
-bookRoutes.get("/:bookId", async (req: Request, res: Response) => {
+bookRoutes.get("/books/:bookId", async (req: Request, res: Response) => {
   try {
     const bookID = req.params.bookId;
     const myBook = await Book.findById(bookID);
@@ -99,15 +86,28 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response) => {
   }
 });
 
-// Using "api/books/:bookId" route with "PATCH" method we can update any particular field of a book data.
+// Using "/edit-book/:bookId" route with "PUT" method we can update any particular field of a book data.
 
-bookRoutes.patch("/:bookId", async (req: Request, res: Response) => {
+bookRoutes.put("/edit-book/:bookId", async (req: Request, res: Response) => {
   try {
     const bookID = req.params.bookId;
     const newBookDetails = req.body;
-    const updatedBook = await Book.findByIdAndUpdate(bookID, newBookDetails, {
-      new: true,
-    });
+    let validBookUpdateDetails = await updateBookZodSchema.parseAsync(
+      newBookDetails
+    );
+    const { copies } = validBookUpdateDetails;
+    if (copies > 0) {
+      validBookUpdateDetails = { ...validBookUpdateDetails, available: true };
+    } else {
+      validBookUpdateDetails = { ...validBookUpdateDetails, available: false };
+    }
+    const updatedBook = await Book.findByIdAndUpdate(
+      bookID,
+      validBookUpdateDetails,
+      {
+        new: true,
+      }
+    );
     res.status(200).json({
       success: true,
       message: "Book details updated successfully",
@@ -123,7 +123,7 @@ bookRoutes.patch("/:bookId", async (req: Request, res: Response) => {
   }
 });
 
-// Using "api/books/:bookId" route with "DELETE" method we can delete any particular book data.
+// Using "/:bookId" route with "DELETE" method we can delete any particular book data.
 
 bookRoutes.delete("/:bookId", async (req: Request, res: Response) => {
   try {

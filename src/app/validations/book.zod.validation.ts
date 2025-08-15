@@ -16,9 +16,27 @@ const createBookZodSchema = z.object({
   title: z.string(),
   author: z.string().transform(formatName),
   genre: z.string().toUpperCase(),
-  isbn: z.string().min(10).max(13),
+  isbn: z
+    .string()
+    .min(10)
+    .max(13)
+    .regex(/^[0-9]{10,13}$/, "ISBN must be 10-13 digits"),
   description: z.string().optional(),
   copies: z.number().min(1),
+  available: z.boolean().default(true),
+});
+
+export const updateBookZodSchema = z.object({
+  title: z.string(),
+  author: z.string().transform(formatName),
+  genre: z.string().toUpperCase(),
+  isbn: z
+    .string()
+    .min(10)
+    .max(13)
+    .regex(/^[0-9]{10,13}$/, "ISBN must be 10-13 digits"),
+  description: z.string().optional(),
+  copies: z.number().min(0),
   available: z.boolean().default(true),
 });
 

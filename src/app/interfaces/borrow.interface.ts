@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 
 export interface Iborrow {
-  book: ObjectId;
+  bookId: ObjectId;
   quantity: number;
   dueDate: Date;
 }
