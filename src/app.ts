@@ -6,7 +6,11 @@ import cors from "cors";
 export const app: Application = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://library-management-frontend-rose.vercel.app"],
+  })
+);
 
 app.use("/", bookRoutes);
 app.use("/", borrowBookRoutes);
