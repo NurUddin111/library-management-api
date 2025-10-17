@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSingleOrMultipleBookZodSchema = void 0;
+exports.createSingleOrMultipleBookZodSchema = exports.updateBookZodSchema = void 0;
 const zod_1 = require("zod");
 // This function will format author name.
 const formatName = (name) => {
@@ -15,9 +15,26 @@ const createBookZodSchema = zod_1.z.object({
     title: zod_1.z.string(),
     author: zod_1.z.string().transform(formatName),
     genre: zod_1.z.string().toUpperCase(),
-    isbn: zod_1.z.string().min(10).max(13),
+    isbn: zod_1.z
+        .string()
+        .min(10)
+        .max(13)
+        .regex(/^[0-9]{10,13}$/, "ISBN must be 10-13 digits"),
     description: zod_1.z.string().optional(),
     copies: zod_1.z.number().min(1),
+    available: zod_1.z.boolean().default(true),
+});
+exports.updateBookZodSchema = zod_1.z.object({
+    title: zod_1.z.string(),
+    author: zod_1.z.string().transform(formatName),
+    genre: zod_1.z.string().toUpperCase(),
+    isbn: zod_1.z
+        .string()
+        .min(10)
+        .max(13)
+        .regex(/^[0-9]{10,13}$/, "ISBN must be 10-13 digits"),
+    description: zod_1.z.string().optional(),
+    copies: zod_1.z.number().min(0),
     available: zod_1.z.boolean().default(true),
 });
 const createBooksZodSchema = zod_1.z.array(createBookZodSchema);

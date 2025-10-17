@@ -18,25 +18,26 @@ const books_model_1 = require("../models/books.model");
 const borrow_model_1 = require("../models/borrow.model");
 const borrow_zod_validation_1 = require("../validations/borrow.zod.validation");
 exports.borrowBookRoutes = express_1.default.Router();
-// Using "/api/borrow" route with "POST" method we can borrow book.
-exports.borrowBookRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// Using "/borrow/:bookId" route with "POST" method we can borrow book.
+exports.borrowBookRoutes.post("/borrow/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const borrowBookRecord = req.body;
+        const bookId = req.params.bookId;
+        const borrowBookRecord = Object.assign({ bookId }, req.body);
         const validBorrowRecord = yield borrow_zod_validation_1.createBorrowZodSchema.parseAsync(borrowBookRecord);
-        const { book, quantity } = validBorrowRecord;
-        const bookDetails = yield books_model_1.Book.findById(book);
+        const { quantity } = validBorrowRecord;
+        const bookDetails = yield books_model_1.Book.findById(bookId);
         const { copies } = bookDetails;
         if (bookDetails && copies >= quantity) {
             const newBorrowRecord = yield borrow_model_1.Borrow.create(validBorrowRecord);
             yield bookDetails.borrow(quantity);
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 message: "Book borrowed successfully",
                 data: newBorrowRecord,
             });
         }
         else {
-            res.status(400).json({
+            res.status(404).json({
                 success: false,
                 message: "Failed to borrow book!!!Can't find book with this id or not enough copies available.Kindly check your book id or reduce your quantity.",
             });
@@ -48,16 +49,15 @@ exports.borrowBookRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 
             success: false,
             error: error,
         });
-        console.log(error);
     }
 }));
-// Using "/api/books" route with "GET" method we can find all the books. We can also filter by genre and sort by any field in ascending or descending way.
-exports.borrowBookRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// Using "/borrow-summary" route with "GET" method we can find all the books. We can also filter by genre and sort by any field in ascending or descending way.
+exports.borrowBookRoutes.get("/borrow-summary", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allBorrowRecords = yield borrow_model_1.Borrow.aggregate([
             {
                 $group: {
-                    _id: "$book",
+                    _id: "$bookId",
                     totalQuantity: { $sum: "$quantity" },
                 },
             },
@@ -83,7 +83,7 @@ exports.borrowBookRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0
                 },
             },
         ]);
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: "Borrow Records retrieved successfully",
             data: allBorrowRecords,
@@ -95,6 +95,5 @@ exports.borrowBookRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0
             message: "Failed to retrieve borrow records!",
             error: error,
         });
-        console.log(error);
     }
 }));
